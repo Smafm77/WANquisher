@@ -1,0 +1,47 @@
+/* Tailwind via CDN. Minimal spinner */ 
+.spinner {
+  display:inline-block; width:16px; height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff; border-radius:50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* --- Anti-jitter table layout + numeric alignment --- */
+#portsTable { table-layout: fixed; width: 100%; border-collapse: collapse; }
+#portsTable th, #portsTable td { overflow: hidden; text-overflow: ellipsis; }
+
+/* Fixed column widths (tune ch as needed) */
+#portsTable th:nth-child(1), #portsTable td:nth-child(1) { width: 22ch; } /* Target */
+#portsTable th:nth-child(2), #portsTable td:nth-child(2) { width: 10ch; } /* Iface  */
+#portsTable th:nth-child(3), #portsTable td:nth-child(3),
+#portsTable th:nth-child(4), #portsTable td:nth-child(4),
+#portsTable th:nth-child(5), #portsTable td:nth-child(5),
+#portsTable th:nth-child(6), #portsTable td:nth-child(6),
+#portsTable th:nth-child(7), #portsTable td:nth-child(7),
+#portsTable th:nth-child(8), #portsTable td:nth-child(8),
+#portsTable th:nth-child(9), #portsTable td:nth-child(9) { width: 12ch; } /* numeric inputs */
+
+/* Stats columns: keep width constant even as digits change */
+#portsTable th:nth-child(10), #portsTable td:nth-child(10),
+#portsTable th:nth-child(11), #portsTable td:nth-child(11),
+#portsTable th:nth-child(12), #portsTable td:nth-child(12) { width: 20ch; }
+
+/* Keep numbers monospaced and non-wrapping for stable visual width */
+#portsTable .stat-tx,
+#portsTable .stat-drops,
+#portsTable .stat-queue {
+  display: inline-block;
+  width: 18ch;                 /* reserve space for "123456789 / 123456" */
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* prefer monospaced digits */
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Inputs fill their cells without reflow spikes */
+#portsTable input {
+  width: 100%;
+  box-sizing: border-box;
+}

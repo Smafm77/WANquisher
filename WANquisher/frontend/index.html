@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WAN Emulator</title>
+  <link rel="stylesheet" href="/static/style/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+  <div class="max-w-7xl mx-auto p-6 space-y-6">
+    <header class="flex items-center justify-between">
+      <h1 class="text-xl font-semibold">WAN Emulator</h1>
+      <nav class="flex gap-2">
+        <button id="tabStart" class="px-3 py-1 rounded bg-emerald-700">Setup</button>
+        <button id="tabPorts" class="px-3 py-1 rounded bg-gray-700">Port overview</button>
+        <button id="tabStatus" class="px-3 py-1 rounded bg-gray-700">Lab status</button>
+      </nav>
+    </header>
+
+    <!-- ───────────── SETUP ───────────── -->
+    <section id="setupView" class="bg-gray-900/60 rounded-xl p-4 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <label class="block">
+          <span class="text-sm text-gray-300">Number of ports</span>
+          <input id="portsCount" type="number" min="1" max="32" value="4"
+            class="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-2 py-1"/>
+        </label>
+        <label class="flex items-end gap-2">
+          <input id="recreate" type="checkbox" class="h-4 w-4 accent-emerald-600"/>
+          <span class="text-sm">Recreate lab</span>
+        </label>
+        <div class="flex items-end gap-3">
+          <button id="createLab" class="px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-600 relative">
+            <span>Create lab</span>
+            <span id="createSpinner" class="spinner hidden ml-2"></span>
+          </button>
+          <button id="destroyLab" class="px-3 py-2 rounded bg-red-700 hover:bg-red-600 relative">
+            <span>Destroy lab</span>
+            <span id="destroySpinner" class="spinner hidden ml-2"></span>
+          </button>
+        </div>
+      </div>
+      <pre id="setupOut" class="bg-black/60 rounded p-3 text-xs whitespace-pre-wrap min-h-[10rem]">—</pre>
+    </section>
+
+    <!-- ───────────── PORT OVERVIEW ───────────── -->
+    <section id="portsView" class="bg-gray-900/60 rounded-xl p-4 space-y-3 hidden">
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="addPort" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700">+ Add port</button>
+        <button id="applyChanges" class="px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-600">Apply changes</button>
+        <label class="flex items-center gap-2 text-sm ml-auto">
+          <input id="autoRefresh" type="checkbox" class="h-4 w-4 accent-emerald-600"/>
+          <span>Auto‑refresh (2s)</span>
+        </label>
+        <span id="sseBadge" class="text-xs bg-gray-800 rounded px-2 py-1">SSE: connecting…</span>
+      </div>
+      <div class="overflow-x-auto border border-gray-800 rounded-lg">
+        <table class="min-w-full text-sm" id="portsTable">
+          <thead class="bg-gray-800/70">
+            <tr>
+              <th class="px-2 py-2 text-left">Target</th>
+              <th class="px-2 py-2 text-left">Iface</th>
+              <th class="px-2 py-2">Delay (ms)</th>
+              <th class="px-2 py-2">Jitter (ms)</th>
+              <th class="px-2 py-2">Loss %</th>
+              <th class="px-2 py-2">BER %</th>
+              <th class="px-2 py-2">Rate</th>
+              <th class="px-2 py-2">Queue depth</th>
+              <th class="px-2 py-2">Framing overhead (B)</th>
+              <th class="px-2 py-2">TX (bytes / frames)</th>
+              <th class="px-2 py-2">Drops (total / %)</th>
+              <th class="px-2 py-2">Queue (bytes / frames)</th>
+              <th class="px-2 py-2"></th>
+            </tr>
+          </thead>
+          <tbody id="portsBody" class="divide-y divide-gray-800"></tbody>
+        </table>
+      </div>
+      <pre id="portsOut" class="bg-black/60 rounded p-3 text-xs whitespace-pre-wrap min-h-[8rem]">—</pre>
+    </section>
+
+    <!-- ───────────── LAB STATUS ───────────── -->
+    <section id="startView" class="bg-gray-900/60 rounded-xl p-4 space-y-4 hidden">
+      <div class="flex items-center gap-3">
+        <h2 class="font-semibold">Lab status</h2>
+        <button id="labRefresh" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700">Refresh</button>
+      </div>
+      <pre id="labOut" class="bg-black/60 rounded p-3 text-xs whitespace-pre-wrap min-h-[12rem]">—</pre>
+      <p class="text-xs text-gray-400">
+        Need to change setup? → <a href="#" class="underline" id="toSetupLink">go to Setup</a>
+      </p>
+    </section>
+  </div>
+
+  <script src="/static/scripts/app.fixed.js"></script>
+</body>
+</html>

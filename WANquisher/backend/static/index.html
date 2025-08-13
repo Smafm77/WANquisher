@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WAN Emulator</title>
+  <link rel="stylesheet" href="/static/style/style.css?v=20250813121500">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+  <div class="max-w-7xl mx-auto p-6 space-y-6">
+    <header class="flex items-center justify-between">
+      <h1 class="text-xl font-semibold">WAN Emulator</h1>
+      <nav class="flex gap-2">
+        <button id="tabStart" class="px-3 py-1 rounded bg-emerald-700">Setup</button>
+        <button id="tabPorts" class="px-3 py-1 rounded bg-gray-700">Port overview</button>
+        <button id="tabStatus" class="px-3 py-1 rounded bg-gray-700">Lab status</button>
+  <button id="tabHelp" class="px-3 py-1 rounded bg-gray-700">Help</button>
+      </nav>
+    </header>
+
+    <!-- ───────────── SETUP ───────────── -->
+    <section id="setupView" class="bg-gray-900/60 rounded-xl p-4 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <label class="block">
+          <span class="text-sm text-gray-300">Number of ports</span>
+          <input id="portsCount" type="number" min="1" max="32" value="4"
+            class="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-2 py-1"/>
+        </label>
+        <label class="flex items-end gap-2">
+          <input id="recreate" type="checkbox" class="h-4 w-4 accent-emerald-600"/>
+          <span class="text-sm">Recreate lab</span>
+        </label>
+        <div class="flex items-end gap-3">
+          <button id="createLab" class="px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-600 relative">
+            <span>Create lab</span>
+            <span id="createSpinner" class="spinner hidden ml-2"></span>
+          </button>
+          <button id="destroyLab" class="px-3 py-2 rounded bg-red-700 hover:bg-red-600 relative">
+            <span>Destroy lab</span>
+            <span id="destroySpinner" class="spinner hidden ml-2"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="col-span-1 md:col-span-2 flex items-end gap-3">
+          <label class="block w-full">
+            <span class="text-sm text-gray-300">Lab name</span>
+            <input id="labName" type="text" placeholder="My lab"
+              class="mt-1 w-full bg-gray-800 border border-gray-700 rounded px-2 py-1"/>
+          </label>
+          <button id="saveLabJson" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700">Save lab (JSON)</button>
+          <input id="loadLabFile" type="file" accept="application/json" class="hidden"/>
+          <button id="loadLabTrigger" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700">Load lab (JSON)</button>
+        </div>
+      </div>
+      <pre id="setupOut" class="bg-black/60 rounded p-3 text-xs whitespace-pre-wrap min-h-[10rem]">—</pre>
+    </section>
+
+    <!-- ───────────── PORT OVERVIEW ───────────── -->
+    
+    <section id="portsView" class="hidden space-y-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="applyChanges" class="px-3 py-2 rounded bg-emerald-700 hover:bg-emerald-600">Apply changes</button>
+        <div class="ml-auto flex items-center gap-2">
+          <span class="text-xs text-gray-400">Preset:</span>
+          <select id="globalPreset" class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm">
+            <option value="">—</option>
+            <option value="none">No shaping</option>
+            <option value="wifi_bad">Wi‑Fi bad</option>
+            <option value="mobile_3g">Mobile 3G</option>
+            <option value="satellite_geo">Satellite GEO</option>
+          </select>
+          <button id="applyPresetAll" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700 text-sm">Apply to all</button>
+          <button id="applyPresetClients" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700 text-sm">Apply to all clients</button>
+          <button id="applyPresetPorts" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700 text-sm">Apply to all ports</button>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-sm text-gray-400">Clients</h3>
+        <div id="clientCards" class="grid gap-3 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
+      </div>
+      <div class="space-y-2">
+  <h3 class="text-sm text-gray-400">Ports</h3>
+        <div id="serverCards" class="grid gap-3 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <!-- ───────────── HELP / INFO ───────────── -->
+    <section id="helpView" class="bg-gray-900/60 rounded-xl p-4 space-y-4 hidden">
+      <h2 class="font-semibold">Help / Info</h2>
+      <div class="space-y-3 text-sm text-gray-300">
+        <p>
+          This WAN Emulator spins up one server/router with multiple ports and matching clients. Use presets
+          and per-field inputs to apply delay, jitter, loss, BER, rate limiting, and queue limits to any card.
+        </p>
+        <ul class="list-disc pl-6 space-y-1">
+          <li>Setup: choose number of ports and create the lab. Destroy removes all lab containers & networks.</li>
+          <li>Port overview: cards are split into Clients (top) and Ports (bottom). Change values and click “Apply” per card or “Apply changes” to batch.</li>
+          <li>Presets: pick a preset and use “Apply to all”, “Apply to all clients”, or “Apply to all ports”.</li>
+          <li>Pings: clients have “Ping server”; ports have “Ping client”. Use ∞ for continuous and Stop to end. RTT is shown per line.</li>
+          <li>Save/Load: on Setup, save current card settings to a JSON file or load a JSON to restore values onto matching cards.</li>
+          <li>Lab status: shows containers, interfaces, and networks in the current lab.</li>
+        </ul>
+        <p class="text-gray-400">Tip: After loading a JSON, review the values then click “Apply changes” to enforce them in the lab.</p>
+      </div>
+    </section>
+    
+
+    <!-- ───────────── LAB STATUS ───────────── -->
+    <section id="startView" class="bg-gray-900/60 rounded-xl p-4 space-y-4 hidden">
+      <div class="flex items-center gap-3">
+        <h2 class="font-semibold">Lab status</h2>
+        <button id="labRefresh" class="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700">Refresh</button>
+      </div>
+      <pre id="labOut" class="bg-black/60 rounded p-3 text-xs whitespace-pre-wrap min-h-[12rem]">—</pre>
+      <p class="text-xs text-gray-400">
+        Need to change setup? → <a href="#" class="underline" id="toSetupLink">go to Setup</a>
+      </p>
+    </section>
+  </div>
+
+  <script src="/static/scripts/app.fixed.js?v=20250813121500"></script>
+</body>
+</html>

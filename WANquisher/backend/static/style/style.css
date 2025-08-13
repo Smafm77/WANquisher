@@ -1,0 +1,62 @@
+/* Tailwind via CDN. Minimal spinner */ 
+.spinner {
+  display:inline-block; width:16px; height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff; border-radius:50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* --- Anti-jitter table layout + numeric alignment --- */
+#portsTable { table-layout: fixed; width: 100%; border-collapse: collapse; }
+#portsTable th, #portsTable td { overflow: hidden; text-overflow: ellipsis; }
+
+/* Fixed column widths (tune ch as needed) */
+#portsTable th:nth-child(1), #portsTable td:nth-child(1) { width: 22ch; } /* Target */
+#portsTable th:nth-child(2), #portsTable td:nth-child(2) { width: 10ch; } /* Iface  */
+#portsTable th:nth-child(3), #portsTable td:nth-child(3),
+#portsTable th:nth-child(4), #portsTable td:nth-child(4),
+#portsTable th:nth-child(5), #portsTable td:nth-child(5),
+#portsTable th:nth-child(6), #portsTable td:nth-child(6),
+#portsTable th:nth-child(7), #portsTable td:nth-child(7),
+#portsTable th:nth-child(8), #portsTable td:nth-child(8),
+#portsTable th:nth-child(9), #portsTable td:nth-child(9) { width: 12ch; } /* numeric inputs */
+
+/* Stats columns: keep width constant even as digits change */
+#portsTable th:nth-child(10), #portsTable td:nth-child(10),
+#portsTable th:nth-child(11), #portsTable td:nth-child(11),
+#portsTable th:nth-child(12), #portsTable td:nth-child(12) { width: 20ch; }
+
+/* Keep numbers monospaced and non-wrapping for stable visual width */
+#portsTable .stat-tx,
+#portsTable .stat-drops,
+#portsTable .stat-queue {
+  display: inline-block;
+  width: 18ch;                 /* reserve space for "123456789 / 123456" */
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* prefer monospaced digits */
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* Inputs fill their cells without reflow spikes */
+#portsTable input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- Port cards --- */
+.port-card { border: 1px solid #374151; background: rgba(0,0,0,0.35); border-radius: 0.75rem; padding: 0.75rem; }
+.port-head { display:flex; align-items:center; justify-content:space-between; gap: 0.75rem; margin-bottom: 0.25rem; }
+.port-title { font-weight: 600; font-size: 0.95rem; }
+.port-sub { color:#9CA3AF; font-size: 0.8rem; }
+.port-grid { display: grid; grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 0.5rem 0.75rem; align-items: start; }
+@media (min-width: 768px) { .port-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); } }
+.port-grid label { display:block; font-size: 0.75rem; color:#9CA3AF; }
+.port-grid input, .port-grid select { width: 100%; background:#111827; border:1px solid #374151; color:#E5E7EB; border-radius:0.375rem; padding: 0.35rem 0.5rem; }
+.port-adv summary { cursor:pointer; font-size: 0.8rem; color:#9CA3AF; margin-top: 0.25rem; }
+.port-stats { margin-top: 0.25rem; font-size: 0.72rem; color:#9CA3AF; }
+
+/* Ping log scroll area */
+.ping-out { max-height: 10rem; overflow: auto; }
